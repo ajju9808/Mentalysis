@@ -1,4 +1,3 @@
-from nltk.tokenize import word_tokenize
 import re
 import string
 
@@ -174,7 +173,6 @@ class Mentalsis(object):
 
         """diffrent formats of the comment. used in diffrent forms"""
         comment_split = comment.split()
-        comment_tokenized = word_tokenize(comment)
         comment_punremoved = re.compile('[{0}]'.format(re.escape(string.punctuation))).sub('', comment)
         comment_listed = []
         for w in comment_split:
