@@ -1,7 +1,6 @@
 import re
 import string
 
-"""NEGATION_LIST will help to check if a word is negated or not, if negated then polarity of the word is reversed"""
 NEGATION_LIST = {
     "nahi"
     "na"
@@ -66,60 +65,38 @@ NEGATION_LIST = {
     "despite",
 }
 
-"""
-This function will help to calculate the punctuation amphilification of the comment
-There are two types of punctuation amphilifers ? and !
-"""
-
+IDIOME_LIST = {
+    "A blessing in disguise": 1,
+    "A dime a dozen": 0.3,
+    "Break a leg": 0.5,
+}
 
 class SentimentAnalysis(object):
 
     def punctuation_amp(self, comment):
         ep_amp = 0
         qm_amp = 0
-        """first calculating the ! mark amphilification factor"""
         ep_count = comment.count("!")
         ep_amp = ep_count * 0.2
-        """Second calculating the ? mark amphilificaiton factor"""
         qm_count = comment.count("?")
         if qm_count > 1:
             qm_amp = qm_count * -0.2
-        """Calculating the total punctuation amphilification score"""
         pun_amp = qm_amp + ep_amp
         if pun_amp > 0.8:
             pun_amp = 0.8
         elif pun_amp < -0.8:
             pun_amp = -0.8
         return pun_amp
-
-    '''
-    """
-    This function will help to detect and calculate any emoticons in the comment
-    The emoticons are stored in a seprate file ???
-    """
-    def emojis_amp(comment_split):
-        emoji_file = open("emoji_file.txt","r")
-        data
-        for word in comment:
-            if word in 
-        return (emo_amp)
-    '''
-
-    """This function will determine the base sentiment value of the comment"""
-
+    
     def sentimentOfKeywords(self, comment):
-        """lexicon will be the dictionary of all the lexicons and their values"""
+        
         lexicon = {}
-
-        """intens will hold the submation of intensity of the words in the sentence"""
         intens = 0.00
-
         with open('vader_lexicon.txt') as f:
             lexicon_file = [line.rstrip('\n') for line in f]
         for line in lexicon_file:
             (word, measure) = line.strip().split('\t')[0:2]
             lexicon[word] = float(measure)
-
         count = 0
         for word in comment:
             for lex in lexicon:
@@ -132,6 +109,7 @@ class SentimentAnalysis(object):
         return (intens)
 
     def total_value(self, pun, emo, sen):
+        
         if sen / 6 > 1:
             sen = 1
         else:
@@ -139,7 +117,6 @@ class SentimentAnalysis(object):
                 sen = -1
             else:
                 sen = sen / 6
-
         if emo / 3 > 1:
             emo = 1
         else:
@@ -160,18 +137,32 @@ class SentimentAnalysis(object):
             tot = sen
         return (tot)
 
+    def idioms_check(self, comment):
+
+        idioms = IDIOME_LIST
+        iv = 0
+        for idiom in idioms:
+            n = len(idiom.split())
+            ll = 0
+            ul = n - 1
+            while ul < len(comment):
+                if idiom.split() == comment[ll:ul + 1]:
+                    iv += idioms[idiom]
+                    del comment[ll:ul + 1]
+                ll += 1
+                ul += 1
+        return comment, iv
 
 class Mentalsis(object):
 
     def calculatingSentiment(self, comment):
-
-        """pun_amp and emo_amp will applied on the sentence"""
+        
         pun_amp = 0.0
         emo_amp = 0.0
         sen_val = 0.0
         tot_val = 0.0
-
-        """diffrent formats of the comment. used in diffrent forms"""
+        idm_val = 0.0
+        sac = SentimentAnalysis()
         comment_split = comment.split()
         comment_punremoved = re.compile('[{0}]'.format(re.escape(string.punctuation))).sub('', comment)
         comment_listed = []
@@ -179,22 +170,8 @@ class Mentalsis(object):
             if len(w) > 2:
                 comment_listed.append(w)
         comment_lowercase = [x.lower() for x in comment_listed]
-
-        """creating the object of SentimentAnalysis Class"""
-        sac = SentimentAnalysis()
-
-        """Calculating the punctuation amphilification of the comment and storeing"""
-        pun_amp = sac.punctuation_amp(comment)
-
-        '''
-        """Calculating the emoticons amphilification of the comment and storeing"""
-        emo_amp = emojis_amp(comment_split)
-        '''
-
-        """Calculating the base sentiment value of the comment"""
+        pun_amp = sac.punctuation_amp(comment_split)
+        comment_lowercase, idm_val = sac.idioms_check(comment_lowercase)
         sen_val = sac.sentimentOfKeywords(comment_lowercase)
-
-        """Calculating the total sentiment value if the comment"""
-        tot_val = sac.total_value(pun_amp, emo_amp, sen_val)
-
+        tot_val = sac.total_value(pun_amp, emo_amp, sen_val+idm_val)
         return(tot_val)
