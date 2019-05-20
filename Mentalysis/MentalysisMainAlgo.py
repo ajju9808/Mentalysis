@@ -66,9 +66,23 @@ NEGATION_LIST = {
 }
 
 IDIOME_LIST = {
-    "A blessing in disguise": 1,
-    "A dime a dozen": 0.3,
-    "Break a leg": 0.5,
+    "a blessing in disguise": 2,
+    "dime a dozen": 0.1;
+    "break a leg": 1;
+    "hang in there": .5;
+    "on the ball": 1.5;
+    "so far so good": 1.5;
+    "best of both worlds": 2;
+    "on cloud nine": 2;
+    "out of the frying pan and into the fire": -2.5;
+    "the shit": 3,
+    "the bomb": 3,
+    "bad ass": 1.5,
+    "yeah right": -2,
+    "cut the mustard": 2,
+    "kiss of death": -1.5,
+    "hand to mouth": -2,
+    "best thing since sliced bread": 2;
 }
 
 class SentimentAnalysis(object):
